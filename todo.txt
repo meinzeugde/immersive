@@ -1,0 +1,46 @@
+
+[-] Übersicht
+    [x] Button zum Umschalten in die Übersicht [Editor]
+    [-] Sichtbereich verschieben
+        [-] Buttons zum verschieben [Editor]
+        [-] Tastenkürzel zum verschieben [Editor]
+    [-] Sichtbereich zoomen
+        [-] Buttons zum zoomen [Editor]
+        [-] Tastenkürzel zum zoomen [Editor]
+    [-] Sichtbereich drehen/kippen
+        [-] Buttons zum drehen/kippen [Editor]
+[-] Steps
+    [x] Step verschieben
+        [x] zugehörige Linien löschen
+        [x] zugehörige Linien neu zeichnen
+        [x] zugehörige Pfeile löschen
+        [x] zugehörige Pfeile neu zeichnen
+        [-] Kamera entsprechend verschieben, falls in Step-Ansicht
+        [x] Buttons zum verschieben eines Steps [Editor]
+        [x] Tastenkürzel zum Verschieben eines Steps [Editor]
+    [x] Step hinzufügen
+        [x] zugehörige Linien neu zeichnen
+        [x] zugehörige Pfeile neu zeichnen
+        [x] zugehörigen Hintergrund einfügen
+        [x] Button zum hinzufügen eines Steps [Editor]
+    [x] Step entfernen
+        [x] zugehörige Linien löschen
+        [x] zugehörige Pfeile löschen
+        [x] zugehörigen Hintergrund löschen
+        [x] Button zum löschen eines Steps [Editor]
+    [x] Step verbinden / Verbindung löschen
+        [x] zugehörige Linien und Arrows zeichnen/löschen
+        [x] Button zum Verbinden eines Steps [Editor]
+[x] Background
+    [x] bei aktuellem Step anzeigen
+    [x] Button zum An-/Ausschalten des im Editor gewählten Step [Editor]
+[x] Editor
+    [x] Button zum Umschalten des Editor Modus
+    [x] Button zum Speichern
+    [x] Button zum Springen in Ansicht des aktuellen Steps
+    [x] Tastenkombination für Speichern und Meldung
+    [-] Position oberer/unterer Bildschirmrand wählen
+[-] Bugs/Fehler
+    [-] Pfeile sind manchmal nicht klickbar, liegt wohl am z-index (F5 hilft)
+    [-]
+

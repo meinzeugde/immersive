@@ -1,0 +1,155 @@
+<!doctype html>
+
+<html ng-app="immersive" encoding="utf-8">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1360" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>iMMersive</title>
+
+    <meta name="description" content="jmpress written in angularjs" />
+    <meta name="author" content="Matteo Esche" />
+
+    <link href="css/impress.css" rel="stylesheet" />
+    <link href="css/font/YanoneKaffeesatz.css" rel="stylesheet" />
+    <link href="css/bootstrap.css" rel="stylesheet" />
+    <link href="css/main.css" rel="stylesheet" />
+
+    <link rel="shortcut icon" href="favicon.png" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
+    <script src="js/lib/lodash.min.js"></script>
+    <script src="js/lib/jquery-1.9.0-min.js"></script>
+    <script src="js/lib/jquery-ui-1.9.2-min.js"></script>
+    <script src="js/lib/jmpress-0.4.5-custom.js"></script>
+    <script src="js/lib/angular-1.2.0.js"></script>
+    <script src="js/lib/angular-route.min.js"></script>
+    <script src="js/lib/angular-resource.min.js"></script>
+    <script src="js/lib/angular-css-injector.min.js"></script>
+    <script src="js/app/app.js"></script>
+    <script src="js/app/controllers.js"></script>
+    <script src="js/app/directives.js"></script>
+    <script src="js/app/filters.js"></script>
+    <script src="js/app/services.js"></script>
+
+    <base href="/immersive/">
+</head>
+
+<body ng-controller="IndexController" keypress-events="global">
+
+<div id="message" show-message="all" ng-class="{'menu-is-bottom':!config.menuOrientationBottom}"></div>
+
+<div id="impress" load-impress>
+
+    <div id="impress-canvas">
+        <div impress-step display-arrows="hideAll" display-background="hideAll" id="overview" class="step" data-x="600" data-y="500" data-scale-x="4" data-scale-y="4" data-z="-400"></div>
+
+        <div impress-step impress-arrows impress-lines impress-background display-arrows="hideOthers" display-background="hideOthers" connectable movable="step" ng-repeat="step in data.steps" id="{{step.id}}" class="step level-{{step.level}}" data-x="{{step.dataX*config.factor}}" data-y="{{step.dataY*config.factor}}" ng-style="{'width':step.width}" ng-class="{'isSelected':interactions.currentStep.id==step.id}">
+            <div class="inner-content-wrap">
+                <div class="title" ng-show="config.editMode">{{step.id}}</div>
+                <span class="text">{{step.text}}</span>
+            </div>
+        </div>
+
+        <div impress-go-to="{{arrow.idTo}}" class="arrow arrow-from-{{arrow.idFrom}} arrow-to-{{arrow.idTo}} level-{{arrow.level}} parent-level-{{arrow.parentLevel}}" ng-repeat="arrow in data.arrows" style="position:absolute;padding:0px; margin:0px; height:50px;line-height:1px;width:50px;-webkit-transform-style: preserve-3d;-webkit-transform: translate(-50%, -50%) translate3d({{arrow.dataX}}px,{{arrow.dataY}}px,10px) rotateX(0deg) rotateY(0deg) rotateZ({{arrow.dataRotateZ}}deg) scaleX(1) scaleY(1) scaleZ(1);transform-style: preserve-3d;transform: translate(-50%, -50%) translate3d({{arrow.dataX}}px,{{arrow.dataY}}px,-10px) rotateX(0deg) rotateY(0deg) rotateZ({{arrow.dataRotateZ}}deg) scaleX(1) scaleY(1) scaleZ(1);"></div>
+        <div class="line line-from-{{line.idFrom}} line-to-{{line.idTo}}" ng-repeat="line in data.lines" style="position:absolute;padding:0px; margin:0px; height:6px;line-height:1px;width:{{line.width}}px; z-index:-1;-webkit-transform-style: preserve-3d;-webkit-transform: translate(-50%, -50%) translate3d({{line.dataX}}px,{{line.dataY}}px,-10px) rotateX(0deg) rotateY(0deg) rotateZ({{line.dataRotateZ}}deg) scaleX(1) scaleY(1) scaleZ(1);transform-style: preserve-3d;transform: translate(-50%, -50%) translate3d({{line.dataX}}px,{{line.dataY}}px,-10px) rotateX(0deg) rotateY(0deg) rotateZ({{line.dataRotateZ}}deg) scaleX(1) scaleY(1) scaleZ(1);"></div>
+    </div>
+
+
+
+    <div class="hint">
+        <p>Leertaste oder Pfeiltasten zum Navigieren</p>
+    </div>
+
+</div>
+
+<div class="{{config.backgroundSelectorName}} {{config.backgroundFromSelectorName}}{{step.id}}" ng-repeat="step in data.steps" ng-style="{'background-image': 'url(\'' + step.bg + '\')'}"></div>
+
+<div id="menue" edit-menu ng-class="{'menu-is-bottom':config.menuOrientationBottom}">
+
+    <div id="taskbar" ng-class="{'active':interactions.taskbarIsHovered}" ng-mouseover="interactions.taskbarIsHovered=true" ng-mouseout="interactions.taskbarIsHovered=false" ng-hide="config.editMode">
+       <div class="step-selector" impress-go-to="overview">0 Übersicht</div>
+       <div class="step-selector" impress-go-to="{{step.id}}" ng-repeat="step in data.steps">
+           {{step.id}} {{step.text}}
+       </div>
+        <div class="step-selector editor-selector" ng-click="config.editMode = !config.editMode" >Editor</div>
+    </div>
+    <div id="editor" ng-show="config.editMode">
+
+        <div class="editor-col edit-step">
+            <h2>Folie verschieben / neu einfügen / löschen</h2>
+            <button ng-class="{'btn-info':interactions.isHovered==1}" class="btn" ng-mouseover="interactions.isHovered=1;interactions.newStepDir=['-x','-y']" ng-click="canvas.moveStep(1)">\</button>
+            <button ng-class="{'btn-info':interactions.isHovered==2}" class="btn" ng-mouseover="interactions.isHovered=2;interactions.newStepDir=['-y']" ng-click="canvas.moveStep(1)">|</button>
+            <button ng-class="{'btn-info':interactions.isHovered==3}" class="btn" ng-mouseover="interactions.isHovered=3;interactions.newStepDir=['-y','+x']" ng-click="canvas.moveStep(1)">/</button>
+            <button ng-disabled="interactions.setConnectMode" class="btn" ng-click="canvas.newStep()">Folie {{interactions.currentStep.id}} verbinden [Strg+Einf]</button>
+
+            <br />
+            <button ng-class="{'btn-info':interactions.isHovered==4}" class="btn" ng-mouseover="interactions.isHovered=4;interactions.newStepDir=['-x']" ng-click="canvas.moveStep(1)">-</button>
+            <button ng-disabled="interactions.setConnectMode" class="btn" ng-click="canvas.newStep()">+</button>
+            <button ng-class="{'btn-info':interactions.isHovered==5}" class="btn" ng-mouseover="interactions.isHovered=5;interactions.newStepDir=['+x']" ng-click="canvas.moveStep(1)">-</button>
+            <button ng-class="{'btn-info':interactions.setConnectMode}" class="btn" ng-click="interactions.setConnectMode = !interactions.setConnectMode">Folie {{interactions.currentStep.id}} verbinden [Strg+C]</button>
+
+            <br />
+            <button ng-class="{'btn-info':interactions.isHovered==6}" class="btn" ng-mouseover="interactions.isHovered=6;interactions.newStepDir=['-x','+y']" ng-click="canvas.moveStep(1)">/</button>
+            <button ng-class="{'btn-info':interactions.isHovered==7}" class="btn" ng-mouseover="interactions.isHovered=7;interactions.newStepDir=['+y']" ng-click="canvas.moveStep(1)">|</button>
+            <button ng-class="{'btn-info':interactions.isHovered==8}" class="btn" ng-mouseover="interactions.isHovered=8;interactions.newStepDir=['+y','+x']" ng-click="canvas.moveStep(1)">\</button>
+            <button ng-disabled="interactions.setConnectMode" class="btn" ng-click="canvas.deleteStep()">Folie {{interactions.currentStep.id}} löschen [Strg+Entf]</button>
+        </div>
+
+        <div class="editor-col edit-step-data">
+            <h2>Folie bearbeiten</h2>
+            Folie wählen: <select keypress-events="input" ng-disabled="interactions.setConnectMode" ng-model="interactions.currentStep" ng-options="step as step.id+' '+step.text+' '+((step.bg)?'*':'') for step in data.steps"></select>
+            <br />
+            Hintergrundbild (Server):
+            <select keypress-events="input" ng-model="interactions.currentStep.bg" ng-options="'img/'+image.filename as image.filename for (key,image) in data.images">
+                <option value="">kein Bild</option>
+            </select>
+            <br />
+            ...oder Hintergrundbild (URL):
+            <input keypress-events="input" type="text" ng-model="interactions.currentStep.bg" />
+            <br />
+            Folientext [F2]: <input keypress-events="input" id="editStepText" ng-model="interactions.currentStep.text" type="text" />
+            <br />
+            Folienbreite: <input keypress-events="input" id="editStepWidth" ng-model="interactions.currentStep.width" type="text" />
+            <br />
+            Aussehen: <select keypress-events="input" ng-model="interactions.currentStep.level" ng-options="level.id as 'level-'+level.id for level in data.levels">
+            <option value="">Standard</option>
+        </select>
+        </div>
+
+        <div class="editor-col edit-step-data">
+            <h2>Präsentation</h2>
+            <a class="btn" impress-go-to="overview" class="overview">Übersicht anzeigen [Strg+Leertaste]</a>
+            <br />
+            <a class="btn" impress-go-to="{{interactions.currentStep.id}}">Folie {{interactions.currentStep.id}} anzeigen [Leertaste]</a>
+            <br />
+            Design: <select keypress-events="input" ng-model="config.design" ng-change="canvas.loadAdditionalCSS()" ng-options="design as design.dir for (key,design) in data.designs">
+                <option value="">Standard</option>
+            </select>
+            <br />
+            Daten: <select keypress-events="input" ng-model="config.presentation" ng-options="presentation as presentation.dir for (key,presentation) in data.presentations">
+                <option value="">Standard</option>
+            </select>
+        </div>
+
+        <div class="editor-col camera">
+            <h2>Editor</h2>
+            <button class="btn" ng-click="canvas.savePresentation()">Alles speichern [Strg+S]</button>
+            <br />
+            <button class="btn" ng-click="config.editMode = !config.editMode">Editor ausschalten [F4]</button>
+            <br />
+            <button class="btn" ng-click="config.menuOrientationBottom = !config.menuOrientationBottom">Editor ausrichten [F3]</button>
+            <br />
+            Taste gedrückt: {{interactions.keysPressed.keyString}}
+        </div>
+    </div>
+</div>
+
+<script>
+    if ("ontouchstart" in document.documentElement) {
+        document.querySelector(".hint").innerHTML = "<p>Den Bildschirm links oder rechts berühren zum Navigieren</p>";
+    }
+</script>
+
+</body>
+</html>
